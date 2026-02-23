@@ -1,4 +1,5 @@
 :root {
+	color-scheme: light dark;
 	--accent: #5b5bd6;
 	--accent-rgb: 91, 91, 214;
 	--black: 23, 26, 34;
@@ -8,6 +9,20 @@
 	--surface: #ffffff;
 	--bg: #f6f8fc;
 	--box-shadow: 0 10px 30px rgba(22, 28, 45, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--accent: #8f8cff;
+		--accent-rgb: 143, 140, 255;
+		--black: 232, 235, 245;
+		--gray: 155, 163, 184;
+		--gray-light: 52, 58, 76;
+		--gray-dark: 223, 227, 240;
+		--surface: #121621;
+		--bg: #0b0f18;
+		--box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+	}
 }
 
 @font-face {
@@ -34,7 +49,7 @@ body {
 	margin: 0;
 	padding: 0;
 	text-align: left;
-	background: radial-gradient(circle at 20% -10%, #ecebff 0%, var(--bg) 42%, #f7f9fd 100%);
+	background: radial-gradient(circle at 20% -10%, rgba(var(--accent-rgb), 0.16) 0%, var(--bg) 42%, var(--bg) 100%);
 	color: rgb(var(--gray-dark));
 	font-size: 18px;
 	line-height: 1.75;
