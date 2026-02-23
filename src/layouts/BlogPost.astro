@@ -9,6 +9,7 @@ import Header from '../components/Header.astro';
 type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 ---
 
 <html lang="zh-CN">
@@ -16,28 +17,37 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<BaseHead title={title} description={description} />
 		<style>
 			main {
-				width: min(980px, calc(100% - 2rem));
+				width: min(980px, calc(100% - 1rem));
+			}
+			.back {
+				display: inline-block;
+				font-size: 0.9rem;
+				color: rgb(var(--gray));
+				text-decoration: none;
+				margin-bottom: 0.6rem;
 			}
 			.hero-image {
 				margin-bottom: 1rem;
 			}
 			.hero-image img {
 				display: block;
+				width: 100%;
 				margin: 0 auto;
-				border-radius: 12px;
+				border-radius: 14px;
 			}
 			.prose {
 				max-width: 760px;
 				margin: auto;
-				padding: 0.2rem 0.4rem 0.8rem;
+				padding: 0.2rem 0.4rem 0.6rem;
 			}
 			.title {
 				margin-bottom: 1rem;
-				padding-bottom: 0.8rem;
+				padding-bottom: 0.9rem;
 				border-bottom: 1px solid rgba(var(--gray), 0.22);
 			}
 			.title h1 {
 				margin: 0.3rem 0 0;
+				line-height: 1.35;
 			}
 			.date {
 				font-size: 0.9rem;
@@ -47,12 +57,55 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				font-style: italic;
 				font-size: 0.84rem;
 			}
+			.prose :global(p) {
+				margin: 1rem 0;
+				line-height: 1.9;
+			}
+			.prose :global(h2) {
+				margin-top: 1.7rem;
+				font-size: 1.45rem;
+			}
+			.prose :global(h3) {
+				margin-top: 1.3rem;
+				font-size: 1.2rem;
+			}
+			.prose :global(ul),
+			.prose :global(ol) {
+				padding-left: 1.35rem;
+			}
+			.prose :global(li) {
+				margin: 0.35rem 0;
+			}
+			.prose :global(table) {
+				width: 100%;
+				border-collapse: collapse;
+				margin: 1rem 0;
+				font-size: 0.92rem;
+			}
+			.prose :global(th),
+			.prose :global(td) {
+				border: 1px solid rgba(var(--gray), 0.24);
+				padding: 0.5rem 0.55rem;
+				text-align: left;
+			}
+			.prose :global(th) {
+				background: rgba(var(--gray), 0.08);
+			}
+			.prose :global(blockquote) {
+				font-size: 1rem;
+				color: rgb(var(--gray));
+				background: rgba(var(--accent-rgb), 0.05);
+				border-radius: 10px;
+				padding: 0.7rem 0.9rem;
+				border-left: 3px solid var(--accent);
+			}
 		</style>
 	</head>
 
 	<body>
 		<Header />
 		<main>
+			<a class="back" href={`${base}blog`}>← 返回文章列表</a>
 			<article>
 				<div class="hero-image">
 					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}

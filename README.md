@@ -1,62 +1,71 @@
-# Astro Starter Kit: Blog
+# Aomei 的个人博客（Astro）
 
-```sh
-npm create astro@latest -- --template blog
-```
+这是 `Aomei的小屋` 的源码仓库。站点采用 **Astro + Markdown**，发布到 **GitHub Pages**。
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 在线地址
 
-Features:
+- 主页：<https://aomeilsh-maker.github.io/personal-blog/>
+- 文章列表：<https://aomeilsh-maker.github.io/personal-blog/blog>
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+## 技术栈
 
-## 🚀 Project Structure
+- Astro (静态站点)
+- Markdown 内容管理
+- GitHub Actions 自动构建与部署
 
-Inside of your Astro project, you'll see the following folders and files:
+## 目录结构
 
 ```text
-├── public/
+personal-blog/
+├── public/                    # 静态资源
 ├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
+│   ├── components/            # 通用组件（Header/Footer 等）
+│   ├── content/blog/          # 文章 Markdown
+│   ├── layouts/               # 页面布局（含文章详情布局）
+│   ├── pages/                 # 路由页面（首页/文章/About）
+│   └── styles/                # 全局样式
 ├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+└── .github/workflows/deploy.yml
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 本地开发
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+```bash
+cd personal-blog
+npm install
+npm run dev
+```
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+打开 <http://localhost:4321> 预览。
 
-Any static assets, like images, can be placed in the `public/` directory.
+## 发布文章
 
-## 🧞 Commands
+在 `src/content/blog/` 新建 `.md` 文件，例如：
 
-All commands are run from the root of the project, from a terminal:
+```md
+---
+title: "文章标题"
+description: "一句摘要"
+pubDate: 2026-02-24
+---
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+这里写正文。
+```
 
-## 👀 Want to learn more?
+保存后本地可立即预览；推送到 `main` 后会自动发布。
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## 部署（GitHub Pages）
 
-## Credit
+仓库需开启：
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+1. `Settings -> Pages` 选择 **GitHub Actions**
+2. `Settings -> Secrets and variables -> Actions -> Variables` 设置：
+   - `SITE_URL = https://aomeilsh-maker.github.io/personal-blog`
+   - `BASE_PATH = /personal-blog`
+
+每次 push 到 `main` 会触发 `.github/workflows/deploy.yml` 自动部署。
+
+## 迁移说明
+
+- 已完成从旧站归档到本项目的文章迁移。
+- `migration-links.txt` 用于保存迁移映射记录（日期/链接/标题）。
