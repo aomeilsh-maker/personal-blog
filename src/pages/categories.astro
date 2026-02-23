@@ -8,13 +8,14 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 const posts = await getCollection('blog');
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 
+const fixedCategories = ['日语学习', 'AI学习', '杂文'];
 const groups = posts.reduce((acc, p) => {
-	const key = p.data.category || '未分类';
+	const key = fixedCategories.includes(p.data.category || '') ? (p.data.category as string) : '杂文';
 	(acc[key] ||= []).push(p);
 	return acc;
 }, {} as Record<string, typeof posts>);
 
-const sorted = Object.entries(groups).sort((a, b) => b[1].length - a[1].length);
+const sorted = fixedCategories.map((name) => [name, groups[name] || []] as const);
 ---
 
 <!doctype html>
