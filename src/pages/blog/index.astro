@@ -47,7 +47,6 @@ function hashId(id: string) {
 }
 
 function pickCover(post: (typeof posts)[number]) {
-	if (post.data.heroImage) return post.data.heroImage;
 	const cat = post.data.category || '杂文';
 	const pool = categoryCoverPool[cat] || coverPool;
 	return pool[hashId(post.id) % pool.length];
