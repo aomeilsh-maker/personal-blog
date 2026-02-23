@@ -17,7 +17,7 @@ npm run dev
 1. 新建 GitHub 仓库并推送本项目
 2. 在仓库 `Settings -> Pages` 中把 Source 设为 **GitHub Actions**
 3. 在仓库 `Settings -> Secrets and variables -> Actions -> Variables` 新建：
-   - `SITE_URL` = 你的站点地址（例如 `https://<username>.github.io`）
+   - `SITE_URL` = 你的站点地址（例如 `https://aomeilsh-maker.github.io/personal-blog`）
 4. push 到 `main` 后自动部署
 
 ## 3) 安全基线（低维护）
