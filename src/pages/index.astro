@@ -2,47 +2,103 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import { getCollection } from 'astro:content';
+import FormattedDate from '../components/FormattedDate.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const posts = (await getCollection('blog'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 6);
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			.hero {
+				display: grid;
+				gap: 1rem;
+				margin-bottom: 1.2rem;
+			}
+			.subtitle {
+				color: rgb(var(--gray));
+				max-width: 56ch;
+			}
+			.quick-links {
+				display: flex;
+				gap: 0.6rem;
+				flex-wrap: wrap;
+			}
+			.quick-links a {
+				display: inline-flex;
+				align-items: center;
+				padding: 0.45rem 0.8rem;
+				border: 1px solid rgba(var(--gray), 0.24);
+				border-radius: 999px;
+				text-decoration: none;
+				color: rgb(var(--black));
+				font-size: 0.92rem;
+			}
+			.section-title {
+				margin: 1.4rem 0 0.8rem;
+				font-size: 1.2rem;
+			}
+			.list {
+				display: grid;
+				gap: 0.7rem;
+			}
+			.card {
+				display: block;
+				padding: 0.95rem 1rem;
+				border: 1px solid rgba(var(--gray), 0.18);
+				border-radius: 12px;
+				text-decoration: none;
+				background: #fff;
+			}
+			.card:hover {
+				border-color: rgba(var(--accent-rgb), 0.45);
+			}
+			.card h3 {
+				margin: 0 0 0.3rem;
+				font-size: 1.05rem;
+			}
+			.meta {
+				font-size: 0.88rem;
+				color: rgb(var(--gray));
+			}
+		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
+			<section class="hero">
+				<h1>{SITE_TITLE}</h1>
+				<p class="subtitle">
+					这里记录 Aomei 的技术实践、学习笔记和思考。慢一点没关系，但尽量写得清楚、有用、可复用。
+				</p>
+				<div class="quick-links">
+					<a href={`${base}blog`}>进入文章列表</a>
+					<a href={`${base}about`}>了解博主</a>
+				</div>
+			</section>
+
+			<section>
+				<h2 class="section-title">最新文章</h2>
+				<div class="list">
+					{
+						posts.map((post) => (
+							<a class="card" href={`${base}blog/${post.id}/`}>
+								<h3>{post.data.title}</h3>
+								<p class="meta">
+									<FormattedDate date={post.data.pubDate} />
+								</p>
+							</a>
+						))
+					}
+				</div>
+			</section>
 		</main>
 		<Footer />
 	</body>

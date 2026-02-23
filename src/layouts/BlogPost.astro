@@ -11,46 +11,41 @@ type Props = CollectionEntry<'blog'>['data'];
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
-<html lang="en">
+<html lang="zh-CN">
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
 			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
+				width: min(980px, calc(100% - 2rem));
 			}
 			.hero-image {
-				width: 100%;
+				margin-bottom: 1rem;
 			}
 			.hero-image img {
 				display: block;
 				margin: 0 auto;
 				border-radius: 12px;
-				box-shadow: var(--box-shadow);
 			}
 			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
+				max-width: 760px;
 				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
+				padding: 0.2rem 0.4rem 0.8rem;
 			}
 			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
+				margin-bottom: 1rem;
+				padding-bottom: 0.8rem;
+				border-bottom: 1px solid rgba(var(--gray), 0.22);
 			}
 			.title h1 {
-				margin: 0 0 0.5em 0;
+				margin: 0.3rem 0 0;
 			}
 			.date {
-				margin-bottom: 0.5em;
+				font-size: 0.9rem;
 				color: rgb(var(--gray));
 			}
 			.last-updated-on {
 				font-style: italic;
+				font-size: 0.84rem;
 			}
 		</style>
 	</head>
@@ -69,13 +64,12 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 							{
 								updatedDate && (
 									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
+										最后更新于 <FormattedDate date={updatedDate} />
 									</div>
 								)
 							}
 						</div>
 						<h1>{title}</h1>
-						<hr />
 					</div>
 					<slot />
 				</div>
