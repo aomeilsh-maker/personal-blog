@@ -1,15 +1,32 @@
 ---
+import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { getCollection } from 'astro:content';
 import FormattedDate from '../components/FormattedDate.astro';
+import Cover1 from '../assets/blog-placeholder-1.jpg';
+import Cover2 from '../assets/blog-placeholder-2.jpg';
+import Cover3 from '../assets/blog-placeholder-3.jpg';
+import Cover4 from '../assets/blog-placeholder-4.jpg';
+import Cover5 from '../assets/blog-placeholder-5.jpg';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
-const posts = (await getCollection('blog'))
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 6);
+const allPosts = (await getCollection('blog')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const posts = allPosts.slice(0, 6);
+const featured = allPosts.slice(0, 3);
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+
+const coverPool = [Cover1, Cover2, Cover3, Cover4, Cover5];
+function hashId(id: string) {
+	let h = 0;
+	for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+	return h;
+}
+function pickCover(post: (typeof allPosts)[number]) {
+	if (post.data.heroImage) return post.data.heroImage;
+	return coverPool[hashId(post.id) % coverPool.length];
+}
 ---
 
 <!doctype html>
@@ -17,57 +34,42 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
-			.hero {
-				display: grid;
-				gap: 1rem;
-				margin-bottom: 1.2rem;
-			}
-			.subtitle {
-				color: rgb(var(--gray));
-				max-width: 56ch;
-			}
-			.quick-links {
-				display: flex;
-				gap: 0.6rem;
-				flex-wrap: wrap;
-			}
+			.hero { display:grid; gap:1rem; margin-bottom: 1.2rem; }
+			.subtitle { color: rgb(var(--gray)); max-width: 60ch; }
+			.quick-links { display:flex; gap:0.6rem; flex-wrap:wrap; }
 			.quick-links a {
-				display: inline-flex;
-				align-items: center;
-				padding: 0.45rem 0.8rem;
-				border: 1px solid rgba(var(--gray), 0.24);
-				border-radius: 999px;
-				text-decoration: none;
-				color: rgb(var(--black));
-				font-size: 0.92rem;
+				display:inline-flex; align-items:center; padding:0.48rem 0.85rem;
+				border:1px solid rgba(var(--gray), .24); border-radius:999px; text-decoration:none;
+				color: rgb(var(--black)); font-size:0.92rem; background:#fff;
 			}
-			.section-title {
-				margin: 1.4rem 0 0.8rem;
-				font-size: 1.2rem;
+
+			.featured-wrap {
+				display:grid; grid-auto-flow:column; grid-auto-columns:minmax(260px, 1fr);
+				overflow-x:auto; gap:0.8rem; padding-bottom:0.2rem;
+				scroll-snap-type:x mandatory;
 			}
-			.list {
-				display: grid;
-				gap: 0.7rem;
+			.featured {
+				position:relative; border-radius:16px; overflow:hidden;
+				min-height: 220px; text-decoration:none; border:1px solid rgba(var(--gray), .22);
+				scroll-snap-align:start;
 			}
+			.featured :global(img) { width:100%; height:100%; object-fit:cover; }
+			.featured .ov {
+				position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end;
+				padding:1rem; background: linear-gradient(to top, rgba(9,10,19,.72), rgba(9,10,19,.08));
+			}
+			.featured h3 { color:#fff; margin:0 0 .35rem; font-size:1.05rem; line-height:1.4; }
+			.featured .meta { font-size:.82rem; color: rgba(255,255,255,.85); }
+
+			.section-title { margin: 1.4rem 0 0.8rem; font-size:1.2rem; }
+			.list { display:grid; gap:0.7rem; }
 			.card {
-				display: block;
-				padding: 0.95rem 1rem;
-				border: 1px solid rgba(var(--gray), 0.18);
-				border-radius: 12px;
-				text-decoration: none;
-				background: #fff;
+				display:block; padding:0.95rem 1rem; border:1px solid rgba(var(--gray), 0.18);
+				border-radius:12px; text-decoration:none; background:#fff;
 			}
-			.card:hover {
-				border-color: rgba(var(--accent-rgb), 0.45);
-			}
-			.card h3 {
-				margin: 0 0 0.3rem;
-				font-size: 1.05rem;
-			}
-			.meta {
-				font-size: 0.88rem;
-				color: rgb(var(--gray));
-			}
+			.card:hover { border-color: rgba(var(--accent-rgb), 0.45); }
+			.card h3 { margin:0 0 0.3rem; font-size:1.05rem; }
+			.meta { font-size:0.88rem; color: rgb(var(--gray)); }
 		</style>
 	</head>
 	<body>
@@ -75,28 +77,38 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
 		<main>
 			<section class="hero">
 				<h1>{SITE_TITLE}</h1>
-				<p class="subtitle">
-					这里记录 Aomei 的技术实践、学习笔记和思考。慢一点没关系，但尽量写得清楚、有用、可复用。
-				</p>
+				<p class="subtitle">这里记录 Aomei 的技术实践、学习笔记和思考。慢一点没关系，但尽量写得清楚、有用、可复用。</p>
 				<div class="quick-links">
 					<a href={`${base}blog`}>进入文章列表</a>
+					<a href={`${base}categories`}>按分类浏览</a>
 					<a href={`${base}about`}>了解博主</a>
+				</div>
+			</section>
+
+			<section>
+				<h2 class="section-title">精选文章</h2>
+				<div class="featured-wrap">
+					{featured.map((post) => (
+						<a class="featured" href={`${base}blog/${post.id}/`}>
+							<Image src={pickCover(post)} alt={post.data.title} width={960} height={540} />
+							<div class="ov">
+								<h3>{post.data.title}</h3>
+								<p class="meta"><FormattedDate date={post.data.pubDate} /></p>
+							</div>
+						</a>
+					))}
 				</div>
 			</section>
 
 			<section>
 				<h2 class="section-title">最新文章</h2>
 				<div class="list">
-					{
-						posts.map((post) => (
-							<a class="card" href={`${base}blog/${post.id}/`}>
-								<h3>{post.data.title}</h3>
-								<p class="meta">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
-							</a>
-						))
-					}
+					{posts.map((post) => (
+						<a class="card" href={`${base}blog/${post.id}/`}>
+							<h3>{post.data.title}</h3>
+							<p class="meta"><FormattedDate date={post.data.pubDate} /></p>
+						</a>
+					))}
 				</div>
 			</section>
 		</main>
