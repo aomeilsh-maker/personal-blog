@@ -1,9 +1,13 @@
 ---
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
+import CoverJP from '../../assets/category-covers/japanese.jpg';
+import CoverAI from '../../assets/category-covers/ai.jpg';
+import CoverEssay from '../../assets/category-covers/essay.jpg';
 import { SITE_TITLE } from '../../consts';
 
 type CategorySlug = 'japanese' | 'ai' | 'essay';
@@ -31,6 +35,12 @@ const posts = allPosts
 		return cat === categoryName;
 	})
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const fallbackCover = {
+	日语学习: CoverJP,
+	AI学习: CoverAI,
+	杂文: CoverEssay,
+}[categoryName];
 ---
 
 <!doctype html>
@@ -43,12 +53,16 @@ const posts = allPosts
 			.hint { margin:.2rem 0 1rem; color: rgb(var(--gray)); font-size:.9rem; }
 			.list { display:grid; gap:.7rem; }
 			.item {
-				display:block; text-decoration:none; background:#fff;
+				display:grid; grid-template-columns: 140px 1fr; gap:.8rem;
+				text-decoration:none; background:#fff;
 				border:1px solid rgba(var(--gray), .2); border-radius:12px;
-				padding:.85rem .95rem;
+				padding:.7rem;
 			}
 			.item:hover { border-color: rgba(var(--accent-rgb), .45); }
+			.thumb { height:86px; border-radius:10px; overflow:hidden; }
+			.thumb :global(img) { width:100%; height:100%; object-fit:cover; }
 			.title { margin:0 0 .3rem; color: rgb(var(--black)); font-size:1.03rem; }
+			@media (max-width:720px){ .item{grid-template-columns:1fr;} .thumb{height:170px;} }
 			.meta { margin:0; color: rgb(var(--gray)); font-size:.86rem; }
 			.empty { color: rgb(var(--gray)); }
 		</style>
@@ -63,8 +77,13 @@ const posts = allPosts
 				<div class="list">
 					{posts.map((post) => (
 						<a class="item" href={`${base}blog/${post.id}/`}>
-							<h2 class="title">{post.data.title}</h2>
-							<p class="meta"><FormattedDate date={post.data.pubDate} /></p>
+							<div class="thumb">
+								<Image src={post.data.heroImage || fallbackCover} alt={post.data.title} width={480} height={270} />
+							</div>
+							<div>
+								<h2 class="title">{post.data.title}</h2>
+								<p class="meta"><FormattedDate date={post.data.pubDate} /></p>
+							</div>
 						</a>
 					))}
 				</div>
