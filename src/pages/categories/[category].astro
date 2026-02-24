@@ -1,0 +1,77 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { SITE_TITLE } from '../../consts';
+
+type CategorySlug = 'japanese' | 'ai' | 'essay';
+
+export async function getStaticPaths() {
+	const categoryMap: Record<CategorySlug, string> = {
+		japanese: '日语学习',
+		ai: 'AI学习',
+		essay: '杂文',
+	};
+	return (Object.keys(categoryMap) as CategorySlug[]).map((slug) => ({
+		params: { category: slug },
+		props: { slug, categoryName: categoryMap[slug] },
+	}));
+}
+
+const { categoryName } = Astro.props as { slug: CategorySlug; categoryName: string };
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+
+const allPosts = await getCollection('blog');
+const posts = allPosts
+	.filter((p) => {
+		const cat = p.data.category || '杂文';
+		if (!['日语学习', 'AI学习', '杂文'].includes(cat)) return categoryName === '杂文';
+		return cat === categoryName;
+	})
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={`${categoryName} - ${SITE_TITLE}`} description={`${categoryName}分类文章列表`} />
+		<style>
+			main { width:min(980px, calc(100% - 1rem)); }
+			.back { display:inline-block; margin-bottom:.8rem; color: rgb(var(--gray)); text-decoration:none; }
+			.hint { margin:.2rem 0 1rem; color: rgb(var(--gray)); font-size:.9rem; }
+			.list { display:grid; gap:.7rem; }
+			.item {
+				display:block; text-decoration:none; background:#fff;
+				border:1px solid rgba(var(--gray), .2); border-radius:12px;
+				padding:.85rem .95rem;
+			}
+			.item:hover { border-color: rgba(var(--accent-rgb), .45); }
+			.title { margin:0 0 .3rem; color: rgb(var(--black)); font-size:1.03rem; }
+			.meta { margin:0; color: rgb(var(--gray)); font-size:.86rem; }
+			.empty { color: rgb(var(--gray)); }
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<a class="back" href={`${base}categories`}>← 返回分类页</a>
+			<h1>{categoryName}</h1>
+			<p class="hint">共 {posts.length} 篇文章</p>
+			{posts.length ? (
+				<div class="list">
+					{posts.map((post) => (
+						<a class="item" href={`${base}blog/${post.id}/`}>
+							<h2 class="title">{post.data.title}</h2>
+							<p class="meta"><FormattedDate date={post.data.pubDate} /></p>
+						</a>
+					))}
+				</div>
+			) : (
+				<p class="empty">这个分类还没有文章。</p>
+			)}
+		</main>
+		<Footer />
+	</body>
+</html>

@@ -25,6 +25,11 @@ const coverMap: Record<string, any> = {
 	AI学习: CoverAI,
 	杂文: CoverEssay,
 };
+const categorySlug: Record<string, string> = {
+	日语学习: 'japanese',
+	AI学习: 'ai',
+	杂文: 'essay',
+};
 ---
 
 <!doctype html>
@@ -51,13 +56,16 @@ const coverMap: Record<string, any> = {
 			}
 			.name { font-size: 1rem; font-weight: 700; }
 			.count { font-size:.82rem; opacity:.92; }
-			.content { padding: .75rem .85rem .95rem; }
-			.sub { margin:0 0 .6rem; font-size:.84rem; color:rgb(var(--gray)); }
-			ul { margin:0; padding-left:1rem; }
-			li { margin:.28rem 0; }
+			.content { padding: .9rem .9rem 1rem; }
+			.desc { margin:0 0 .85rem; font-size:.9rem; color:rgb(var(--gray)); }
 			a { text-decoration:none; color: rgb(var(--black)); }
 			a:hover { color: var(--accent); }
-			.empty { font-size:.88rem; color: rgb(var(--gray)); margin:0; }
+			.enter {
+				display:inline-flex; align-items:center; justify-content:center;
+				padding:.45rem .75rem; border-radius:10px;
+				border:1px solid rgba(var(--gray), .25);
+				font-size:.86rem; color:var(--accent);
+			}
 			@media (max-width:980px){ .grid{ grid-template-columns:1fr; } }
 		</style>
 	</head>
@@ -66,30 +74,21 @@ const coverMap: Record<string, any> = {
 		<main>
 			<h1>文章分类</h1>
 			<div class="grid">
-				{sorted.map(([name, list]) => {
-					const top = list.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 5);
-					return (
-						<section class="group" id={encodeURIComponent(name)}>
-							<div class="cover">
-								<Image src={coverMap[name]} alt={name} width={1200} height={675} />
-								<div class="shade">
-									<span class="name">{name}</span>
-									<span class="count">{list.length} 篇</span>
-								</div>
+				{sorted.map(([name, list]) => (
+					<section class="group" id={encodeURIComponent(name)}>
+						<div class="cover">
+							<Image src={coverMap[name]} alt={name} width={1200} height={675} />
+							<div class="shade">
+								<span class="name">{name}</span>
+								<span class="count">{list.length} 篇</span>
 							</div>
-							<div class="content">
-								<p class="sub">最近文章</p>
-								{top.length ? (
-									<ul>
-										{top.map((post) => <li><a href={`${base}blog/${post.id}/`}>{post.data.title}</a></li>)}
-									</ul>
-								) : (
-									<p class="empty">这个分类暂时还没有文章。</p>
-								)}
-							</div>
-						</section>
-					);
-				})}
+						</div>
+						<div class="content">
+							<p class="desc">查看这个分类下的全部文章。</p>
+							<a class="enter" href={`${base}categories/${categorySlug[name]}/`}>进入分类</a>
+						</div>
+					</section>
+				))}
 			</div>
 		</main>
 		<Footer />
