@@ -72,14 +72,7 @@ function searchableText(post: (typeof posts)[number]) {
 			main { width: min(1120px, calc(100% - 1rem)); }
 			.head { display:flex; justify-content:space-between; align-items:end; gap:1rem; margin-bottom:1rem; }
 			.hint { font-size:0.9rem; color: rgb(var(--gray)); }
-			.search-wrap { margin: 0 0 1rem; }
-			.search {
-				width: 100%; padding: 0.72rem 0.9rem; border-radius: 12px;
-				border: 1px solid rgba(var(--gray), .28); background: #fff;
-				font-size: 0.96rem; color: rgb(var(--black));
-			}
-			.search:focus { outline: none; border-color: rgba(var(--accent-rgb), .62); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .18); }
-			.result-tip { margin: .55rem 0 0; font-size: .88rem; color: rgb(var(--gray)); }
+			.result-tip { margin: .2rem 0 1rem; font-size: .88rem; color: rgb(var(--gray)); }
 			.cats { display:flex; flex-wrap:wrap; gap:0.55rem; margin-bottom:1.2rem; }
 			.cat {
 				display:inline-flex; gap:0.38rem; align-items:center;
@@ -128,10 +121,7 @@ function searchableText(post: (typeof posts)[number]) {
 			<div class="cats">
 				{sortedCategories.map(([name, count]) => <a class="cat" href={`${base}categories#${encodeURIComponent(name)}`}>{name}<span>{count}</span></a>)}
 			</div>
-			<div class="search-wrap">
-				<input id="post-search" class="search" type="search" placeholder="搜索文章：标题 / 描述 / 分类 / 标签" autocomplete="off" />
-				<p id="search-result-tip" class="result-tip">显示全部 {posts.length} 篇</p>
-			</div>
+			<p id="search-result-tip" class="result-tip">显示全部 {posts.length} 篇</p>
 			<div id="post-list" class="list">
 				{posts.map((post) => {
 					const cat = post.data.category || '杂文';
@@ -160,38 +150,28 @@ function searchableText(post: (typeof posts)[number]) {
 		</main>
 		<script is:inline>
 			(() => {
-				const input = document.getElementById('post-search');
 				const list = document.getElementById('post-list');
 				const tip = document.getElementById('search-result-tip');
 				const empty = document.getElementById('search-empty');
-				if (!input || !list || !tip || !empty) return;
+				if (!list || !tip || !empty) return;
 
 				const items = Array.from(list.querySelectorAll('.item'));
 				const total = items.length;
-				const params = new URLSearchParams(window.location.search);
-				const q = (params.get('q') || '').trim();
-				if (q) input.value = q;
+				const kw = (new URLSearchParams(window.location.search).get('q') || '').trim().toLowerCase();
+				let visible = 0;
 
-				const render = () => {
-					const kw = input.value.trim().toLowerCase();
-					let visible = 0;
-					for (const item of items) {
-						const hay = (item.getAttribute('data-search') || '').toLowerCase();
-						const matched = !kw || hay.includes(kw);
-						item.hidden = !matched;
-						if (matched) visible++;
-					}
-					tip.textContent = kw ? `关键词“${input.value.trim()}”命中 ${visible} / ${total} 篇` : `显示全部 ${total} 篇`;
-					empty.hidden = visible !== 0;
+				for (const item of items) {
+					const hay = (item.getAttribute('data-search') || '').toLowerCase();
+					const matched = !kw || hay.includes(kw);
+					item.hidden = !matched;
+					if (matched) visible++;
+				}
 
-					const url = new URL(window.location.href);
-					if (kw) url.searchParams.set('q', input.value.trim());
-					else url.searchParams.delete('q');
-					history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
-				};
-
-				input.addEventListener('input', render);
-				render();
+				const rawQ = (new URLSearchParams(window.location.search).get('q') || '').trim();
+				tip.textContent = kw
+					? `当前按关键词“${rawQ}”筛选：${visible} / ${total} 篇`
+					: `显示全部 ${total} 篇`;
+				empty.hidden = visible !== 0;
 			})();
 		</script>
 		<Footer />
