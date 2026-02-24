@@ -15,14 +15,14 @@ const base = import.meta.env.BASE_URL.endsWith('/')
 			<HeaderLink href={`${base}blog`}>文章</HeaderLink>
 			<HeaderLink href={`${base}categories`}>分类</HeaderLink>
 			<HeaderLink href={`${base}about`}>关于</HeaderLink>
+			<a class="github-link" href="https://github.com/aomeilsh-maker" target="_blank" rel="noreferrer">GitHub</a>
 		</div>
 		<div class="actions">
 			<form class="search" action={`${base}blog`} method="get" role="search">
 				<label class="sr-only" for="nav-search">搜索文章</label>
 				<input id="nav-search" name="q" type="search" placeholder="搜索文章" />
-				<button type="submit">确认</button>
+				<button type="submit" aria-label="确认搜索">确认</button>
 			</form>
-			<a href="https://github.com/aomeilsh-maker" target="_blank" rel="noreferrer">GitHub</a>
 		</div>
 	</nav>
 </header>
@@ -55,6 +55,7 @@ const base = import.meta.env.BASE_URL.endsWith('/')
 	}
 	.internal-links {
 		display: flex;
+		align-items: center;
 		gap: 0.15rem;
 	}
 	nav a {
@@ -97,10 +98,12 @@ const base = import.meta.env.BASE_URL.endsWith('/')
 		border-radius: 10px;
 		border: 1px solid rgba(var(--gray), 0.35);
 		background: #fff;
+		color: rgb(23, 26, 34);
 		font-size: 0.84rem;
+		font-weight: 700;
 		cursor: pointer;
 	}
-	.actions a {
+	.github-link {
 		font-size: 0.9rem;
 		padding: 0.5rem 0.75rem;
 		border: 1px solid rgba(var(--gray), 0.28);
