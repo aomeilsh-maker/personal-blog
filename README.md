@@ -54,6 +54,19 @@ pubDate: 2026-02-24
 
 保存后本地可立即预览；推送到 `main` 后会自动发布。
 
+## 评论功能（Utterances）
+
+本站已接入 Utterances 评论组件（基于 GitHub Issues）。
+
+- 代码配置文件：`src/consts.ts`
+- 当前仓库：`aomeilsh-maker/personal-blog`
+
+首次使用需要在 GitHub 安装 Utterances App：
+
+1. 打开 <https://github.com/apps/utterances>
+2. 点击 Install，授权到 `aomeilsh-maker/personal-blog`
+3. 回到任意文章页，评论区会自动创建/关联 issue
+
 ## 部署（GitHub Pages）
 
 仓库需开启：
